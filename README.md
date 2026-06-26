@@ -39,7 +39,11 @@ The model predicts one of the following classes:
 ## Project Structure
 
 ```text
-personality-prediction-api/
+personality-prediction-api-decryptogen/
+├── __pycache__/
+├── venv/
+├── .gitignore
+├── .python-version
 ├── app.py
 ├── personality_dataset.csv
 ├── personality_model.joblib
