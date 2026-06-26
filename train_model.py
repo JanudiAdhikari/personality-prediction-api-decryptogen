@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 import joblib
 
@@ -9,10 +11,16 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-df = pd.read_csv("personality_dataset.csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR / "personality_dataset.csv"
+MODEL_PATH = BASE_DIR / "personality_model.joblib"
+
+# Load the dataset from the project folder
+df = pd.read_csv(DATASET_PATH)
 
 target_column = "Personality"
 
+# Separate the target from the feature columns
 X = df.drop(columns=[target_column])
 y = df[target_column]
 
@@ -29,6 +37,7 @@ categorical_features = [
     "Drained_after_socializing"
 ]
 
+# Prepare preprocessing steps for numeric and categorical values
 numeric_transformer = Pipeline(steps=[
     ("imputer", SimpleImputer(strategy="median"))
 ])
@@ -50,6 +59,7 @@ model = Pipeline(steps=[
     ("classifier", GradientBoostingClassifier(random_state=42))
 ])
 
+# Split the data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -58,6 +68,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
+# Train the model
 model.fit(X_train, y_train)
 
 y_pred = model.predict(X_test)
@@ -67,6 +78,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 print(classification_report(y_test, y_pred))
 
-joblib.dump(model, "personality_model.joblib")
+# Save the trained model for the API
+joblib.dump(model, MODEL_PATH)
 
-print("Model saved as personality_model.joblib")
+print(f"Model saved as {MODEL_PATH.name}")

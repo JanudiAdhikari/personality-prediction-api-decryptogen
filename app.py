@@ -1,7 +1,12 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 import joblib
+
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "personality_model.joblib"
 
 app = FastAPI(
     title="Personality Prediction API",
@@ -9,7 +14,8 @@ app = FastAPI(
     version="1.0"
 )
 
-model = joblib.load("personality_model.joblib")
+# Load the trained model once when the app starts
+model = joblib.load(MODEL_PATH)
 
 
 class PersonalityInput(BaseModel):
